@@ -1,8 +1,8 @@
 {
   "name": "slashcord",
-  "version": "1.0.0",
-  "description": "Superpowered slash command handler made for discord.js",
-  "main": "index.js",
+  "version": "1.7.0",
+  "description": "Super-powered slash command handler made for discord.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "cd tests && ts-node index.js"
   },
