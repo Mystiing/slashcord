@@ -1,0 +1,24 @@
+{
+  "name": "slashcord",
+  "version": "1.0.0",
+  "description": "Superpowered slash command handler made for discord.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "cd tests && ts-node index.js"
+  },
+  "keywords": [
+    "discord.js",
+    "slash-commands",
+    "slash-handler"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.5",
+    "@types/node-fetch": "^2.5.10"
+  }
+}
