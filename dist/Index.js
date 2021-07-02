@@ -37,10 +37,11 @@ class Slashcord {
     /**
      * Get commands from a guild, or globally.
      * @example
-     * // Without guild ID's
+     * <caption>Without guild ID's</caption>
      * const slash = new Slashcord(client, { commandsDir: "./commands" })
      * slash.get()
-     * // With guild ID's
+     * @example
+     * <caption>With guild ID's</caption>
      * const slash = new Slashcord(client, { commandsDir: "./commands" })
      * slash.get("id")
      */
@@ -61,10 +62,11 @@ class Slashcord {
     /**
      * Creating a command globally, or guild only.
      * @example
-     * // Without guild ID's
+     * <caption> Without guild ID's </caption>
      * const slash = new Slashcord(client, { commandsDir: "./commands" })
      * slash.create("ping", "pong!", [])
-     * // With guild ID's
+     * @example
+     * <caption> With guild ID's </caption>
      * const slash = new Slashcord(client, { commandsDir: "./commands" })
      * slash.create("ping", "pong", [], "id")
      */
@@ -92,10 +94,11 @@ class Slashcord {
     /**
      * Deleting a command globally, or guild only.
      * @example
-     * // Without guild ID's
+     * <caption> Without guild ID's </caption>
      * const slash = new Slashcord(client, { commandsDir: "./commands" })
      * slash.delete("command id")
-     * // With guild ID's
+     * @example
+     * <caption> With guild ID's </caption>
      * const slash = new Slashcord(client, { commandsDir: "./commands" })
      * slash.delete("command id", "guild id")
      */
