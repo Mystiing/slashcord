@@ -73,7 +73,7 @@ Guild ID ➜ The guild ID for the slash command **[OPTIONAL]**
 
 ### More Complex Way
 
-This way provides support for replies and more indetail properties.
+This way provides support for replies and more detailed properties.
 
 ```js
 /* Somewhere in your commands folder
@@ -107,6 +107,42 @@ interaction.reply(embed, { ephemeral: true });
 ## Editing
 
 Editing an interaction response is simple, assuming you replied to the user.
+
+```js
+interaction.reply("Hey, wait...");
+interaction.edit("Alright.");
+```
+
+> An error will be thrown if you haven't replied.
+
+## Deleting
+
+Deleting an interaction response is simple, it has options for you to use.
+
+```js
+// With options
+interaction.reply("Ayo?");
+// NOTE: The timeout must be in milliseconds.
+interaction.delete({ timeout: 1000 });
+
+// Without options
+interaction.reply("Bye nub!");
+interaction.delete();
+```
+
+## Fetching
+
+Fetching our interaction response is pretty simple, make sure you `await` or use `.then`
+
+```js
+interaction.reply("React with 🍪");
+const message = await interaction.fetchReply();
+message.react("🍪");
+```
+
+# Followup
+
+Coming soon™️
 
 ## Contributing
 
