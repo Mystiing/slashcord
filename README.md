@@ -140,6 +140,12 @@ const message = await interaction.fetchReply();
 message.react("🍪");
 ```
 
+# Thinking
+We are thinking about what to say, to get rid of the message edit the message.
+```js
+interaction.thinking()
+await interaction.edit('Hey!')
+```
 # Followup
 
 Coming soon™️
