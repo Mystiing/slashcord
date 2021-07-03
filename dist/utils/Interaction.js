@@ -64,7 +64,7 @@ class Interaction {
             data.flags = (_a = options === null || options === void 0 ? void 0 : options.flags) !== null && _a !== void 0 ? _a : undefined;
             data.tts = (_b = options === null || options === void 0 ? void 0 : options.tts) !== null && _b !== void 0 ? _b : false;
             if (options === null || options === void 0 ? void 0 : options.embeds) {
-                data.embeds = [options.embeds];
+                data.embeds = options.embeds;
             }
             if (options === null || options === void 0 ? void 0 : options.ephemeral) {
                 data.flags = 64;
@@ -117,7 +117,7 @@ class Interaction {
             data.flags = (_a = options === null || options === void 0 ? void 0 : options.flags) !== null && _a !== void 0 ? _a : undefined;
             data.tts = (_b = options === null || options === void 0 ? void 0 : options.tts) !== null && _b !== void 0 ? _b : false;
             if (options === null || options === void 0 ? void 0 : options.embeds) {
-                data.embeds = [options.embeds];
+                data.embeds = options.embeds;
             }
             return yield node_fetch_1.default(`https://discord.com/api/v9/webhooks/${(_c = this.client.user) === null || _c === void 0 ? void 0 : _c.id}/${this.token}/messages/@original`, {
                 headers: {
@@ -168,10 +168,17 @@ class Interaction {
      * interaction.thinking()
      * await interaction.edit("I was thinking.")
      */
-    thinking() {
+    thinking(options) {
         return __awaiter(this, void 0, void 0, function* () {
+            let data = {
+                flags: undefined,
+            };
+            if (options === null || options === void 0 ? void 0 : options.ephemeral) {
+                data.flags = 64;
+            }
             const input = {
                 type: 5,
+                data,
             };
             yield node_fetch_1.default(`https://discord.com/api/v9/interactions/${this.id}/${this.token}/callback`, {
                 body: JSON.stringify(input),
@@ -191,13 +198,9 @@ class Interaction {
                     "Content-Type": "application/json",
                 },
             })).json();
-            //@ts-ignore
-            const message = yield this.channel.messages.fetch(res.id);
+            const message = yield this.channel.messages.fetch((yield res).id);
             return message;
         });
-    }
-    get followUp() {
-        return this._followUp;
     }
 }
 exports.default = Interaction;

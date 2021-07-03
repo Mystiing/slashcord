@@ -28,7 +28,7 @@ interface Interaction {
     channelID: string;
     applicationID: string;
     handler: Slashcord;
-    _followUp: FollowUp;
+    followUp: FollowUp;
 }
 declare class Interaction {
     constructor(interaction: any, client: Client, handler: Slashcord);
@@ -85,8 +85,9 @@ declare class Interaction {
      * interaction.thinking()
      * await interaction.edit("I was thinking.")
      */
-    thinking(): Promise<void>;
+    thinking(options?: {
+        ephemeral: boolean;
+    }): Promise<void>;
     fetchReply(): Promise<import("discord.js").Message>;
-    get followUp(): FollowUp;
 }
 export default Interaction;

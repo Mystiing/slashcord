@@ -4,6 +4,7 @@ import { Handler } from "./handlers/Handler";
 import Options from "./Options";
 
 import fetch from "node-fetch";
+import Interaction from "./utils/Interaction";
 
 class Slashcord {
   public client: Client;
@@ -12,6 +13,8 @@ class Slashcord {
   public testServers: string[] = [];
 
   public commands: Collection<string, any> = new Collection();
+
+  static Interaction: Interaction;
   constructor(client: Client, options: Options) {
     /** If no client was provided, we warn them. */
     if (!client) {

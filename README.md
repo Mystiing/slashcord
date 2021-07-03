@@ -141,14 +141,62 @@ message.react("🍪");
 ```
 
 # Thinking
-We are thinking about what to say, to get rid of the message edit the message.
-```js
-interaction.thinking()
-await interaction.edit('Hey!')
-```
-# Followup
 
-Coming soon™️
+We are thinking about what to say, to get rid of the message edit the message.
+
+```js
+interaction.thinking();
+await interaction.edit("Hey!");
+```
+
+# Followups
+
+Using followups in slashcord is pretty simple, just use the `followUp` property in the `interaction` object.
+Some methods require you to get the message object out of them.
+
+## Sending
+
+Sending a followup is pretty simple, all you have to do is this:
+
+```js
+// Assuming your not going to edit your followUp
+interaction.reply("Hey!");
+interaction.followUp.send("WOAH!");
+```
+
+## Edit
+
+Editing a followup is simple, but you need the `Message` object from it to use it.
+NOTE: you also need the message object for the `delete` method.
+
+```js
+interaction.reply("Hey!");
+const msg = await interaction.followUp.send("WOAH!");
+// You can do your embeds, flags here as well :)
+interaction.followUp.edit("WHAT HOW?", { messageId: msg.id });
+```
+
+> An error will be thrown if you didn't put the message ID.
+
+> Visit here for more info: https://github.com/Mystiing/slashcord/wiki/Followups
+
+## Deleting
+
+As stated above:
+Deleting a followup is simple, but you need the `Message` object from it to use it.
+
+```js
+interaction.reply("Hey!");
+const msg = await interaction.followUp.send("WOAH!");
+// Without timeouts
+interaction.followUp.delete({ messageId: msg.id });
+// With timeouts
+interaction.followUp.delete({ messageId: msg.id, timeout: 1000 });
+```
+
+> An error will be thrown if you didn't put the message ID.
+
+> Visit here for more info: https://github.com/Mystiing/slashcord/wiki/Followups
 
 ## Contributing
 

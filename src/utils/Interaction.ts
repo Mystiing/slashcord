@@ -39,7 +39,7 @@ interface Interaction {
   channelID: string;
   applicationID: string;
   handler: Slashcord;
-  _followUp: FollowUp;
+  followUp: FollowUp;
 }
 
 class Interaction {
@@ -98,7 +98,7 @@ class Interaction {
     data.flags = options?.flags ?? undefined;
     data.tts = options?.tts ?? false;
     if (options?.embeds) {
-      data.embeds = [options.embeds];
+      data.embeds = options.embeds;
     }
 
     if (options?.ephemeral) {
@@ -160,7 +160,7 @@ class Interaction {
     data.flags = options?.flags ?? undefined;
     data.tts = options?.tts ?? false;
     if (options?.embeds) {
-      data.embeds = [options.embeds];
+      data.embeds = options.embeds;
     }
 
     return await fetch(
@@ -210,9 +210,18 @@ class Interaction {
    * interaction.thinking()
    * await interaction.edit("I was thinking.")
    */
-  async thinking() {
+  async thinking(options?: { ephemeral: boolean }) {
+    let data: any = {
+      flags: undefined,
+    };
+
+    if (options?.ephemeral) {
+      data.flags = 64;
+    }
+
     const input = {
       type: 5,
+      data,
     };
 
     await fetch(
@@ -236,13 +245,8 @@ class Interaction {
         },
       })
     ).json();
-    //@ts-ignore
-    const message = await this.channel!.messages.fetch(res.id);
+    const message = await this.channel!.messages.fetch((await res).id);
     return message;
-  }
-
-  get followUp() {
-    return this._followUp;
   }
 }
 

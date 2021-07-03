@@ -1,6 +1,7 @@
 import { existsSync } from "fs";
 import { isAbsolute, join } from "path";
 import Slashcord from "../Index";
+import FollowUp from "../utils/FollowUp";
 import getFiles from "../utils/getFiles";
 import Interaction from "../utils/Interaction";
 
@@ -30,6 +31,7 @@ class Handler {
     //@ts-ignore
     handler.client.ws.on("INTERACTION_CREATE", (interaction) => {
       interaction = new Interaction(interaction, handler.client, handler);
+      interaction.followUp = new FollowUp(interaction, handler.client, handler);
       const cmd = handler.commands.get(interaction.data.name);
       if (!cmd) return;
       const args = interaction.data.options;

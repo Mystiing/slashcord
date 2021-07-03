@@ -1,10 +1,12 @@
 import { Channel, Client, Collection } from "discord.js";
 import Options from "./Options";
+import Interaction from "./utils/Interaction";
 declare class Slashcord {
     client: Client;
     commandsDir: string;
     testServers: string[];
     commands: Collection<string, any>;
+    static Interaction: Interaction;
     constructor(client: Client, options: Options);
     /**
      * Get commands from a guild, or globally.

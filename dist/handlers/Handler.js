@@ -34,6 +34,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Handler = void 0;
 const fs_1 = require("fs");
 const path_1 = require("path");
+const FollowUp_1 = __importDefault(require("../utils/FollowUp"));
 const getFiles_1 = __importDefault(require("../utils/getFiles"));
 const Interaction_1 = __importDefault(require("../utils/Interaction"));
 class Handler {
@@ -54,6 +55,7 @@ class Handler {
         //@ts-ignore
         handler.client.ws.on("INTERACTION_CREATE", (interaction) => {
             interaction = new Interaction_1.default(interaction, handler.client, handler);
+            interaction.followUp = new FollowUp_1.default(interaction, handler.client, handler);
             const cmd = handler.commands.get(interaction.data.name);
             if (!cmd)
                 return;
