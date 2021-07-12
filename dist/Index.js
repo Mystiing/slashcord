@@ -11,21 +11,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Interaction = exports.Command = void 0;
 const discord_js_1 = require("discord.js");
 const Handler_1 = require("./handlers/Handler");
 const node_fetch_1 = __importDefault(require("node-fetch"));
+const Interaction_1 = __importDefault(require("./utils/Interaction"));
+exports.Interaction = Interaction_1.default;
+const Command_1 = __importDefault(require("./utils/other/Command"));
+exports.Command = Command_1.default;
 class Slashcord {
     constructor(client, options) {
-        var _a;
+        var _a, _b, _c;
         this.commandsDir = "./commands";
         this.testServers = [];
         this.commands = new discord_js_1.Collection();
+        this.permissionError = "You don't have the {PERMISSION} permission to use that.";
         /** If no client was provided, we warn them. */
         if (!client) {
             throw new Error("Please provide a valid Discord.JS client.");
         }
         this.client = client;
         this.commandsDir = (_a = options === null || options === void 0 ? void 0 : options.commandsDir) !== null && _a !== void 0 ? _a : "./commands";
+        this.permissionError =
+            (_c = (_b = options === null || options === void 0 ? void 0 : options.customSettings) === null || _b === void 0 ? void 0 : _b.permissionError) !== null && _c !== void 0 ? _c : "You don't have the {PERMISSION} permission to use that.";
         if (options.testServers) {
             if (typeof options.testServers === "string") {
                 options.testServers = [options.testServers];
@@ -51,12 +60,21 @@ class Slashcord {
             const appId = (_a = this.client.user) === null || _a === void 0 ? void 0 : _a.id;
             let url = `https://discord.com/api/v9/applications/${appId}`;
             if (guildId) {
-                url += `/guilds/${guildId}/commands`;
+                url += `/guilds/${guildId}`;
             }
             url += "/commands";
-            return (yield node_fetch_1.default(url, {
-                headers: { Authorization: `Bot ${this.client.token}` },
+            const res = yield (yield node_fetch_1.default(url, {
+                headers: {
+                    Authorization: `Bot ${this.client.token}`,
+                    "Content-Type": "application/json",
+                },
             })).json();
+            // let cmd;
+            // res.forEach((command: any) => {
+            //   cmd = new AppCommand(command);
+            //   return cmd;
+            // });
+            return res;
         });
     }
     /**
@@ -76,7 +94,7 @@ class Slashcord {
             const appId = (_a = this.client.user) === null || _a === void 0 ? void 0 : _a.id;
             let url = `https://discord.com/api/v9/applications/${appId}`;
             if (guildId) {
-                url += `/guilds/${guildId}/commands`;
+                url += `/guilds/${guildId}`;
             }
             url += `/commands`;
             let data = {
@@ -84,10 +102,13 @@ class Slashcord {
                 description,
                 options,
             };
-            return (yield node_fetch_1.default(url, {
+            return yield (yield node_fetch_1.default(url, {
                 body: JSON.stringify(data),
                 method: "POST",
-                headers: { Authorization: `Bot ${this.client.token}` },
+                headers: {
+                    Authorization: `Bot ${this.client.token}`,
+                    "Content-Type": "application/json",
+                },
             })).json();
         });
     }
@@ -108,7 +129,7 @@ class Slashcord {
             const appId = (_a = this.client.user) === null || _a === void 0 ? void 0 : _a.id;
             let url = `https://discord.com/api/v9/applications/${appId}`;
             if (guildId) {
-                url += `/guilds/${guildId}/commands/${commandId}`;
+                url += `/guilds/${guildId}`;
             }
             url = `/commands/${commandId}`;
             return yield node_fetch_1.default(url, {
@@ -127,4 +148,4 @@ class Slashcord {
         });
     }
 }
-module.exports = Slashcord;
+exports.default = Slashcord;

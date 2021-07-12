@@ -2,8 +2,9 @@ import { existsSync } from "fs";
 import { isAbsolute, join } from "path";
 import Slashcord from "../Index";
 import FollowUp from "../utils/FollowUp";
-import getFiles from "../utils/getFiles";
+import getFiles from "../utils/other/getFiles";
 import Interaction from "../utils/Interaction";
+import { GuildMember, PermissionResolvable } from "discord.js";
 
 class Handler {
   constructor(handler: Slashcord, dir: string) {
@@ -29,14 +30,40 @@ class Handler {
     }
 
     //@ts-ignore
-    handler.client.ws.on("INTERACTION_CREATE", (interaction) => {
-      interaction = new Interaction(interaction, handler.client, handler);
-      interaction.followUp = new FollowUp(interaction, handler.client, handler);
-      const cmd = handler.commands.get(interaction.data.name);
-      if (!cmd) return;
-      const args = interaction.data.options;
-      cmd.execute(interaction, args, handler.client, handler);
-    });
+    handler.client.ws.on(
+      //@ts-ignore
+      "INTERACTION_CREATE",
+      async (interaction: Interaction) => {
+        interaction = new Interaction(interaction, handler.client, handler);
+        interaction.followUp = new FollowUp(
+          interaction,
+          handler.client,
+          handler
+        );
+        //@ts-ignore
+        const cmd = handler.commands.get(interaction.data.name);
+        if (!cmd) return;
+
+        if (
+          cmd.memberPerms &&
+          !interaction
+            .channel!.permissionsFor(interaction.member!)!
+            .has(cmd.memberPerms, true)
+        ) {
+          return interaction.reply(
+            handler.permissionError.replace(
+              /{PERMISSION}/g,
+              await missingPermissions(interaction.member!, cmd.memberPerms)
+            )
+          );
+        }
+
+        //@ts-ignore
+        const args = interaction.data.options;
+        const client = handler.client;
+        cmd.execute({ interaction, args, client, handler });
+      }
+    );
   }
   async makeSlash(file: string, fileName: string, handler: Slashcord) {
     const command = (await import(file)).default;
@@ -65,3 +92,18 @@ class Handler {
 }
 
 export { Handler };
+
+// credit goes to canta [https://github.com/canta-slaus/bot-prefab]
+function missingPermissions(member: GuildMember, perms: PermissionResolvable) {
+  const missingPerms = member.permissions.missing(perms).map(
+    (str) =>
+      `\`${str
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/\b(\w)/g, (char) => char.toUpperCase())}\``
+  );
+
+  return missingPerms.length > 1
+    ? `${missingPerms.slice(0, -1).join(", ")} and ${missingPerms.slice(-1)[0]}`
+    : missingPerms[0];
+}

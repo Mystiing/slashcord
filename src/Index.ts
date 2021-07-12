@@ -5,6 +5,8 @@ import Options from "./Options";
 
 import fetch from "node-fetch";
 import Interaction from "./utils/Interaction";
+import Command from "./utils/other/Command";
+import AppCommand from "./utils/AppCommand";
 
 class Slashcord {
   public client: Client;
@@ -12,9 +14,11 @@ class Slashcord {
   public commandsDir: string = "./commands";
   public testServers: string[] = [];
 
-  public commands: Collection<string, any> = new Collection();
+  public commands: Collection<string, Command> = new Collection();
 
-  static Interaction: Interaction;
+  public permissionError: string =
+    "You don't have the {PERMISSION} permission to use that.";
+
   constructor(client: Client, options: Options) {
     /** If no client was provided, we warn them. */
     if (!client) {
@@ -23,6 +27,9 @@ class Slashcord {
 
     this.client = client;
     this.commandsDir = options?.commandsDir ?? "./commands";
+    this.permissionError =
+      options?.customSettings?.permissionError ??
+      "You don't have the {PERMISSION} permission to use that.";
 
     if (options.testServers!) {
       if (typeof options.testServers === "string") {
@@ -51,15 +58,24 @@ class Slashcord {
     let url = `https://discord.com/api/v9/applications/${appId}`;
 
     if (guildId) {
-      url += `/guilds/${guildId}/commands`;
+      url += `/guilds/${guildId}`;
     }
     url += "/commands";
 
-    return (
+    const res = await (
       await fetch(url, {
-        headers: { Authorization: `Bot ${this.client.token}` },
+        headers: {
+          Authorization: `Bot ${this.client.token}`,
+          "Content-Type": "application/json",
+        },
       })
     ).json();
+    // let cmd;
+    // res.forEach((command: any) => {
+    //   cmd = new AppCommand(command);
+    //   return cmd;
+    // });
+    return res;
   }
 
   /**
@@ -77,13 +93,13 @@ class Slashcord {
     name: string,
     description: string,
     options: object[] = [],
-    guildId?: string
+    guildId?: string | string[]
   ) {
     const appId = this.client.user?.id;
 
     let url = `https://discord.com/api/v9/applications/${appId}`;
     if (guildId) {
-      url += `/guilds/${guildId}/commands`;
+      url += `/guilds/${guildId}`;
     }
     url += `/commands`;
 
@@ -93,11 +109,14 @@ class Slashcord {
       options,
     };
 
-    return (
+    return await (
       await fetch(url, {
         body: JSON.stringify(data),
         method: "POST",
-        headers: { Authorization: `Bot ${this.client.token}` },
+        headers: {
+          Authorization: `Bot ${this.client.token}`,
+          "Content-Type": "application/json",
+        },
       })
     ).json();
   }
@@ -117,7 +136,7 @@ class Slashcord {
     let url = `https://discord.com/api/v9/applications/${appId}`;
 
     if (guildId) {
-      url += `/guilds/${guildId}/commands/${commandId}`;
+      url += `/guilds/${guildId}`;
     }
     url = `/commands/${commandId}`;
 
@@ -138,4 +157,5 @@ class Slashcord {
   }
 }
 
-export = Slashcord;
+export default Slashcord;
+export { Command, Interaction };

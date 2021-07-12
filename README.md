@@ -21,7 +21,7 @@ When installing slashcord, you should consider the following setup:
 
 ```js
 // With CommonJS
-const Slashcord = require("slashcord");
+const Slashcord = require("slashcord").default;
 // With ESM
 import Slashcord from "slashcord";
 ```
@@ -29,7 +29,7 @@ import Slashcord from "slashcord";
 Please keep in mind, Node v14 and higher is required.
 
 ```js
-const Slashcord = require("slashcord");
+const Slashcord = require("slashcord").default;
 const { Client } = require("discord.js");
 
 // Declaring our new client.
@@ -84,11 +84,41 @@ This way provides support for replies and more detailed properties.
 module.exports = {
   // name: "ping",
   description: "Simple pong?",
-  async execute(interaction) {
+  execute: ({ interaction, args, client }) => {
     interaction.reply("Pong!");
   },
 };
 ```
+
+### Arguments
+
+If the user were to provide arguments we would have to collect it like so:
+```js
+module.exports = {
+    // name: "arguments",
+    description: "A simple args command, with no meaning.",
+     options: [{
+         type: 3, // This is a string type.
+         required: true, // Must be a boolean.
+         name: "input", 
+         description: "the input comin back."
+     }],
+    execute: async ({ interaction, args }) => {
+        const input = args[0].value
+        const embed = new MessageEmbed()
+        .setAuthor('u thot')
+        .setDescription(input)
+        interaction.reply('kek', { embeds: [embed] })
+    }
+}
+```
+Using arguments means you need to use options property, which has all these properties:
+Type ➜ The option type, check Discord API Docs REQUIRED
+Required ➜ Whether or not the argument is required or not. OPTIONAL
+Choices ➜ Check the "Choices" Page OPTIONAL
+Name ➜  The name of the argument REQUIRED
+Description ➜  The description of the argument. REQUIRED
+
 
 ## Replying
 
@@ -145,9 +175,16 @@ message.react("🍪");
 We are thinking about what to say, to get rid of the message edit the message.
 
 ```js
+// Without options
 interaction.thinking();
 await interaction.edit("Hey!");
+
+// With options
+interaction.thinking({ ephemeral: true });
+await interaction.edit("Sus, only you can see it tho.");
 ```
+
+> The edit will be ephemeral as well, if you set it in the options of the thinking method.
 
 # Followups
 

@@ -7,6 +7,7 @@ declare type Options = {
     ephemeral?: boolean;
     flags?: boolean;
     tts?: boolean;
+    fetchReply?: boolean;
 };
 declare type DataOptions = {
     name: string;
@@ -46,7 +47,7 @@ declare class Interaction {
      * interaction.reply(embed, { ephemeral: true })
      *
      */
-    reply(content: any, options?: Options): Promise<import("node-fetch").Response>;
+    reply(content: any, options?: Options): Promise<import("discord.js").Message | import("node-fetch").Response>;
     /**
      * Editing our initial interaction response.
      * @example

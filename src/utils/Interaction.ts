@@ -16,6 +16,7 @@ type Options = {
   ephemeral?: boolean;
   flags?: boolean;
   tts?: boolean;
+  fetchReply?: boolean;
 };
 
 type DataOptions = {
@@ -109,6 +110,30 @@ class Interaction {
       type: options?.type ?? 4,
       data,
     };
+
+    if (options?.fetchReply) {
+      await fetch(
+        `https://discord.com/api/v9/interactions/${this.id}/${this.token}/callback`,
+        {
+          body: JSON.stringify(input),
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const url = `https://discord.com/api/v9/webhooks/${this.client.user?.id}/${this.token}/messages/@original`;
+      const res = (
+        await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bot ${this.client.token}`,
+            "Content-Type": "application/json",
+          },
+        })
+      ).json();
+      const message = await this.channel!.messages.fetch((await res).id);
+      return message;
+    }
 
     return await fetch(
       `https://discord.com/api/v9/interactions/${this.id}/${this.token}/callback`,

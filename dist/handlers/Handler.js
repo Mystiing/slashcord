@@ -35,7 +35,7 @@ exports.Handler = void 0;
 const fs_1 = require("fs");
 const path_1 = require("path");
 const FollowUp_1 = __importDefault(require("../utils/FollowUp"));
-const getFiles_1 = __importDefault(require("../utils/getFiles"));
+const getFiles_1 = __importDefault(require("../utils/other/getFiles"));
 const Interaction_1 = __importDefault(require("../utils/Interaction"));
 class Handler {
     constructor(handler, dir) {
@@ -53,15 +53,26 @@ class Handler {
             }))();
         }
         //@ts-ignore
-        handler.client.ws.on("INTERACTION_CREATE", (interaction) => {
+        handler.client.ws.on(
+        //@ts-ignore
+        "INTERACTION_CREATE", (interaction) => __awaiter(this, void 0, void 0, function* () {
             interaction = new Interaction_1.default(interaction, handler.client, handler);
             interaction.followUp = new FollowUp_1.default(interaction, handler.client, handler);
+            //@ts-ignore
             const cmd = handler.commands.get(interaction.data.name);
             if (!cmd)
                 return;
+            if (cmd.memberPerms &&
+                !interaction
+                    .channel.permissionsFor(interaction.member)
+                    .has(cmd.memberPerms, true)) {
+                return interaction.reply(handler.permissionError.replace(/{PERMISSION}/g, yield missingPermissions(interaction.member, cmd.memberPerms)));
+            }
+            //@ts-ignore
             const args = interaction.data.options;
-            cmd.execute(interaction, args, handler.client, handler);
-        });
+            const client = handler.client;
+            cmd.execute({ interaction, args, client, handler });
+        }));
     }
     makeSlash(file, fileName, handler) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -85,3 +96,13 @@ class Handler {
     }
 }
 exports.Handler = Handler;
+// credit goes to canta [https://github.com/canta-slaus/bot-prefab]
+function missingPermissions(member, perms) {
+    const missingPerms = member.permissions.missing(perms).map((str) => `\`${str
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/\b(\w)/g, (char) => char.toUpperCase())}\``);
+    return missingPerms.length > 1
+        ? `${missingPerms.slice(0, -1).join(", ")} and ${missingPerms.slice(-1)[0]}`
+        : missingPerms[0];
+}

@@ -46,7 +46,7 @@ class Interaction {
      *
      */
     reply(content, options) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             if (!content && !(options === null || options === void 0 ? void 0 : options.embeds)) {
                 throw new Error("Content cannot be empty.");
@@ -73,6 +73,23 @@ class Interaction {
                 type: (_c = options === null || options === void 0 ? void 0 : options.type) !== null && _c !== void 0 ? _c : 4,
                 data,
             };
+            if (options === null || options === void 0 ? void 0 : options.fetchReply) {
+                yield node_fetch_1.default(`https://discord.com/api/v9/interactions/${this.id}/${this.token}/callback`, {
+                    body: JSON.stringify(input),
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                });
+                const url = `https://discord.com/api/v9/webhooks/${(_d = this.client.user) === null || _d === void 0 ? void 0 : _d.id}/${this.token}/messages/@original`;
+                const res = (yield node_fetch_1.default(url, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bot ${this.client.token}`,
+                        "Content-Type": "application/json",
+                    },
+                })).json();
+                const message = yield this.channel.messages.fetch((yield res).id);
+                return message;
+            }
             return yield node_fetch_1.default(`https://discord.com/api/v9/interactions/${this.id}/${this.token}/callback`, {
                 body: JSON.stringify(input),
                 method: "POST",

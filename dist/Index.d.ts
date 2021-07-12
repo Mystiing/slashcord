@@ -1,12 +1,13 @@
 import { Channel, Client, Collection } from "discord.js";
 import Options from "./Options";
 import Interaction from "./utils/Interaction";
+import Command from "./utils/other/Command";
 declare class Slashcord {
     client: Client;
     commandsDir: string;
     testServers: string[];
-    commands: Collection<string, any>;
-    static Interaction: Interaction;
+    commands: Collection<string, Command>;
+    permissionError: string;
     constructor(client: Client, options: Options);
     /**
      * Get commands from a guild, or globally.
@@ -31,7 +32,7 @@ declare class Slashcord {
      * const slash = new Slashcord(client, { commandsDir: "./commands" })
      * slash.create("ping", "pong", [], "id")
      */
-    create(name: string, description: string, options?: object[], guildId?: string): Promise<any>;
+    create(name: string, description: string, options?: object[], guildId?: string | string[]): Promise<any>;
     /**
      * Deleting a command globally, or guild only.
      * @example
@@ -48,4 +49,5 @@ declare class Slashcord {
         files: object[] | null;
     }>;
 }
-export = Slashcord;
+export default Slashcord;
+export { Command, Interaction };
