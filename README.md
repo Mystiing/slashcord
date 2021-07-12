@@ -12,7 +12,10 @@
 ## Installation
 
 ```bash
+# With NPM
 npm install slashcord
+# Also, with Yarn
+yarn add slashcord
 ```
 
 ## Setup
@@ -93,32 +96,70 @@ module.exports = {
 ### Arguments
 
 If the user were to provide arguments we would have to collect it like so:
+
 ```js
 module.exports = {
-    // name: "arguments",
-    description: "A simple args command, with no meaning.",
-     options: [{
-         type: 3, // This is a string type.
-         required: true, // Must be a boolean.
-         name: "input", 
-         description: "the input comin back."
-     }],
-    execute: async ({ interaction, args }) => {
-        const input = args[0].value
-        const embed = new MessageEmbed()
-        .setAuthor('u thot')
-        .setDescription(input)
-        interaction.reply('kek', { embeds: [embed] })
-    }
-}
+  // name: "arguments",
+  description: "A simple args command, with no meaning.",
+  options: [
+    {
+      type: 3, // This is a string type.
+      required: true, // Must be a boolean.
+      name: "input",
+      description: "the input comin back.",
+    },
+  ],
+  execute: async ({ interaction, args }) => {
+    const input = args[0].value;
+    const embed = new MessageEmbed().setAuthor("u thot").setDescription(input);
+    interaction.reply("kek", { embeds: [embed] });
+  },
+};
 ```
-Using arguments means you need to use options property, which has all these properties:
-Type ➜ The option type, check Discord API Docs REQUIRED
-Required ➜ Whether or not the argument is required or not. OPTIONAL
-Choices ➜ Check the "Choices" Page OPTIONAL
-Name ➜  The name of the argument REQUIRED
-Description ➜  The description of the argument. REQUIRED
 
+Using arguments means you need to use options property, which has all these properties:
+
+Type ➜ The option type, check [Discord API Docs](https://discord.com/developers/docs/interactions/slash-commands#data-models-and-types) **[REQUIRED]**
+
+Required ➜ Whether or not the argument is required or not. **[OPTIONAL]**
+
+Choices ➜ Check the "Choices" section. **[OPTIONAL]**
+
+Name ➜ The name of the argument **[REQUIRED]**
+
+Description ➜ The description of the argument. **[REQUIRED]**
+
+### Choices
+
+Following up from the arguments section, choices are also available for you to use.
+
+```js
+module.exports = {
+  description: "Choices, choices, choices.",
+  options: [
+    {
+      name: "choice",
+      description: "choice",
+      type: 3,
+      required: true,
+      choices: [
+        {
+          name: "robux",
+          value: "robuc", // this will be handy for arguments
+        },
+        {
+          name: "lol",
+          value: "lol",
+        },
+      ],
+    },
+  ],
+  execute: async ({ interaction, args }) => {
+    const choice = args[0].value;
+    interaction.reply(`You chose ${choice}`);
+  },
+};
+```
 
 ## Replying
 
@@ -134,12 +175,28 @@ const embed = new MessageEmbed().setTitle("some title");
 interaction.reply(embed, { ephemeral: true });
 ```
 
+> You can also fetch the reply in the options.
+
+```js
+// Without fetching it.
+interaction.reply("Sad, no fetching.", { fetchReply: false });
+
+// Fetching the reply while replying!
+const msg = await interaction.reply("React for cookies.", { fetchReply: true });
+msg.react("🍪");
+```
+
 ## Editing
 
 Editing an interaction response is simple, assuming you replied to the user.
 
 ```js
+// Without ephemeral responses
 interaction.reply("Hey, wait...");
+interaction.edit("Alright.");
+
+// With ephemeral responses
+interaction.thinking({ ephemeral: true });
 interaction.edit("Alright.");
 ```
 
