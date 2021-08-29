@@ -3,6 +3,7 @@ import {
   ApplicationCommandOptionData,
   Client,
   Collection,
+  CommandInteraction,
 } from "discord.js";
 import { ApplicationCommandTypes } from "discord.js/typings/enums";
 import EventEmitter from "events";

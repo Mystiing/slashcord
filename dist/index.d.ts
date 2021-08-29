@@ -1,8 +1,18 @@
 /// <reference types="node" />
-import { ApplicationCommandOptionData, Client, Collection } from "discord.js";
+import { ApplicationCommandOptionData, Client, Collection, CommandInteraction } from "discord.js";
 import { ApplicationCommandTypes } from "discord.js/typings/enums";
 import EventEmitter from "events";
 import { SlashOptions } from "./options";
+interface Slashcord {
+    create(options: {
+        name: string;
+        description: string;
+        args?: ApplicationCommandOptionData[];
+        guildId?: string;
+        type?: ApplicationCommandTypes;
+    }): any;
+    on(event: "interaction", listener: (interaction: CommandInteraction, command: any) => any): any;
+}
 declare class Slashcord extends EventEmitter {
     client: Client;
     commandsDir: string;
@@ -15,13 +25,6 @@ declare class Slashcord extends EventEmitter {
     }): Promise<import("discord.js").ApplicationCommand<{}> | Collection<string, import("discord.js").ApplicationCommand<{
         guild: import("discord.js").GuildResolvable;
     }>> | undefined>;
-    create(options: {
-        name: string;
-        description: string;
-        args?: ApplicationCommandOptionData[];
-        guildId?: string;
-        type?: ApplicationCommandTypes;
-    }): Promise<import("discord.js").ApplicationCommand<{}> | undefined>;
     delete(options: {
         commandId: string;
         guildId?: string;

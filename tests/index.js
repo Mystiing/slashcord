@@ -5,7 +5,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES] })
 
 client.on('ready', () => {
     console.log('hi')
-    new Slashcord(client, {
+    const slash = new Slashcord(client, {
         commandsDir: 'commands'
     })
 })
