@@ -1,0 +1,15 @@
+{
+  "name": "slashcord",
+  "version": "2.0.0",
+  "description": "Superpowered slash command handler made for discord.js v13!",
+  "main": "dist/index.js",
+  "repository": "https://github.com/Mystiing/slashcord",
+  "author": "MysticIsSus",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^13.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.6.2"
+  }
+}
