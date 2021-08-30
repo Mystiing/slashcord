@@ -1,2 +1,6 @@
 node_modules
+<<<<<<< HEAD
 .DS_Store
+=======
+tests
+>>>>>>> 62e3fb7e93e05d435c0f406586180a8f78ef8f00
