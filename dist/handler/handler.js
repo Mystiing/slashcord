@@ -58,6 +58,23 @@ class Handler {
             const command = this.handler.commands.get(cmdName);
             if (!command)
                 return;
+            if (command.extras) {
+	      if (command.extras.memberPerms) {
+	        if (!interaction.member.permissions.has(command.extras.memberPerms)) {
+	          return interaction.reply({
+	            content: `Insufficient member perimissions \`${command.extras.memberPerms}\``,
+	          });
+	        }
+	      }
+	      if (command.extras.clientPerms) {
+	        if (!interaction.guild.me.permissions.has(command.extras.clientPerms)) {
+	          return interaction.reply({
+	            content: `Insufficient client perimissions \`${command.extras.clientPerms}\``,
+	          });
+	        }
+	      }
+	    }
+
             let client = this.client;
             command.execute({ interaction, args, client });
             this.handler.emit("interaction", interaction, command);
