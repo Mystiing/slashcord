@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "allowJs": true,
+        "checkJs": false,
         "target": "es6",
         "module": "commonjs",
         "lib": ["esnext"],

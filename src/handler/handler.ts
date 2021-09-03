@@ -4,7 +4,7 @@ import { isAbsolute, join } from "path";
 import Slashcord from "..";
 import SlashError from "../utils/error";
 import getFiles from "../utils/getFiles";
-
+const hasPerm:any = require('../js/permission.js')
 export default class Handler {
   public client: Client;
   public handler: Slashcord;
@@ -30,6 +30,18 @@ export default class Handler {
 
       const command = this.handler.commands.get(cmdName);
       if (!command) return;
+      let permcheck:any = hasPerm(command, interaction)
+      switch (permcheck) {
+        case 'MemberPermissionsError':
+          interaction.reply(`Insufficient member perimissions \`${command.extras.memberPerms}\``)
+          return
+        break;
+        case 'ClientPermissionsError':
+          interaction.reply(`Insufficient client perimissions \`${command.extras.clientPerms}\``)
+          return
+        break;
+      }
+        // Insufficient member perimissions \`${command.extras.memberPerms}\`
       let client = this.client;
       command.execute({ interaction, args, client });
       this.handler.emit("interaction", interaction, command);

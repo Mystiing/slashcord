@@ -35,15 +35,16 @@ const fs_1 = require("fs");
 const path_1 = require("path");
 const error_1 = __importDefault(require("../utils/error"));
 const getFiles_1 = __importDefault(require("../utils/getFiles"));
+const hasPerm = require('../jsutils/permission.js');
 class Handler {
     constructor(handler, rawDir) {
         this.client = handler.client;
         this.handler = handler;
-        const dir = path_1.isAbsolute(rawDir) ? rawDir : path_1.join(require.main.path, rawDir);
-        if (!fs_1.existsSync(dir)) {
+        const dir = (0, path_1.isAbsolute)(rawDir) ? rawDir : (0, path_1.join)(require.main.path, rawDir);
+        if (!(0, fs_1.existsSync)(dir)) {
             throw new error_1.default(`The command directory: "${rawDir}" doesn't exist!`);
         }
-        const files = getFiles_1.default(dir);
+        const files = (0, getFiles_1.default)(dir);
         for (const [file, fileName] of files) {
             this.register(file, fileName);
         }
@@ -58,23 +59,18 @@ class Handler {
             const command = this.handler.commands.get(cmdName);
             if (!command)
                 return;
-            if (command.extras) {
-	      if (command.extras.memberPerms) {
-	        if (!interaction.member.permissions.has(command.extras.memberPerms)) {
-	          return interaction.reply({
-	            content: `Insufficient member perimissions \`${command.extras.memberPerms}\``,
-	          });
-	        }
-	      }
-	      if (command.extras.clientPerms) {
-	        if (!interaction.guild.me.permissions.has(command.extras.clientPerms)) {
-	          return interaction.reply({
-	            content: `Insufficient client perimissions \`${command.extras.clientPerms}\``,
-	          });
-	        }
-	      }
-	    }
-
+            let permcheck = hasPerm(command, interaction);
+            switch (permcheck) {
+                case 'MemberPermissionsError':
+                    interaction.reply(`Insufficient member perimissions \`${command.extras.memberPerms}\``);
+                    return;
+                    break;
+                case 'ClientPermissionsError':
+                    interaction.reply(`Insufficient client perimissions \`${command.extras.clientPerms}\``);
+                    return;
+                    break;
+            }
+            // Insufficient member perimissions \`${command.extras.memberPerms}\`
             let client = this.client;
             command.execute({ interaction, args, client });
             this.handler.emit("interaction", interaction, command);
