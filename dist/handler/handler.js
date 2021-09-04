@@ -35,7 +35,7 @@ const fs_1 = require("fs");
 const path_1 = require("path");
 const error_1 = __importDefault(require("../utils/error"));
 const getFiles_1 = __importDefault(require("../utils/getFiles"));
-const hasPerm = require('../jsutils/permission.js');
+const hasPerm = require('../js/permission.js');
 class Handler {
     constructor(handler, rawDir) {
         this.client = handler.client;
